@@ -9,22 +9,21 @@ import java.util.Scanner;
  */
 public class Exercise1 {
     /**
-     * @param args the command line arguments
-     * @return 
+     * @param args the command line arguments 
      */
     public static void main(String[] args) {
         Calculator calc = new Calculator();
-        String expression="";
+        String expression = new String();
         try{
-            Scanner input = new Scanner(new File("C:\\Users\\ciber.LAPTOP-0JK7T32O\\Documents\\NetBeansProjects\\BS1\\Exercise1\\src\\exercise1\\expresionNumerica.txt"));
-            expression = input.nextLine();
-            input.close();
-            calc.evaluate(expression);
+            try (Scanner input = new Scanner(new File("C:\\Users\\ciber.LAPTOP-0JK7T32O\\Documents\\NetBeansProjects\\BS1\\Exercise1\\src\\exercise1\\expresionNumerica.txt"))) {
+                expression = input.nextLine();
+            }
+            expression=calc.evaluate(expression);
         }
         catch(Exception ex){
-            System.out.println(ex.toString());
+            System.out.println("Syntax Error");
         }
-        System.out.println(calc.evaluate(expression));
+        System.out.println(expression);
     }
     
 }

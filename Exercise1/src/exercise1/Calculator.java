@@ -6,6 +6,7 @@
 package exercise1;
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
@@ -15,12 +16,13 @@ import java.util.Stack;
  * @author Hernán Olmedo
  */
 public class Calculator {
-    public String evaluate(String expression){        
+    public String evaluate(String expression){  
+        int i=0;
         String[] parts = expression.split("(?<=\\d)(?=\\D)|(?<=\\D)(?=\\d)|(?<=\\D)(?=\\D)");
-        List<String> list=Arrays.asList(parts);
+        List<String> list=new ArrayList<>(Arrays.asList(parts));
         Stack<Integer> openBracketsPosition = new Stack();
-        for(int i=0;i<parts.length;i++){
-            switch(parts[i]) {
+        while(list.size()>i){
+            switch(list.get(i)) {
                 case "(":
                 case "[":
                 case "{":
@@ -31,39 +33,35 @@ public class Calculator {
                 case "}":
                     int openBracketPosition;
                     openBracketPosition = openBracketsPosition.pop();
-                    list.set(openBracketPosition,expressionResolver(list.subList(openBracketPosition,i)));
-                    list.subList(openBracketPosition+1, i).clear();
+                    list.set(openBracketPosition,expressionResolver(list.subList(openBracketPosition+1,i)));
+                    list.subList(openBracketPosition+1, i-1).clear();
+                    i=openBracketPosition;
             }
+            i++;
         }
-        return "something";
+        return expressionResolver(list);
     }
     private String expressionResolver(List<String> listExpression){
-        int result;
         int pending=0;
-        int i=0;
         String[] pendings=new String[2];
-        String operator1="";
-        String operator2="";
-        String number1="";
-        String number2="";
         while(listExpression.size()>1){
-            number1=listExpression.get(i);
-            number2=listExpression.get(i+2);
-            operator1=listExpression.get(i+1);
-            operator2=listExpression.get(i+3);
-            if(operator1=="*"||operator1=="/"){
-                listExpression.set(i,resolveOperation(number1,number2,operator1));
-                listExpression.subList(i+1, i+2).clear();
-                if(pending==1&&(operator2=="+"||operator2=="-")){
-                    listExpression.set(i,resolveOperation(pendings[0],number1,pendings[1]));
+            String number1=listExpression.get(0);
+            String number2=listExpression.get(2);
+            String operator1=listExpression.get(1);
+            String operator2=(listExpression.size()>3)?listExpression.get(3):"";
+            if(operator1.equals("*")||operator1.equals("/")){
+                listExpression.set(0,resolveOperation(number1,number2,operator1));
+                listExpression.subList(1, 3).clear();
+                if(pending==1&&(operator2.equals("+")||operator2.equals("-")||operator2.equals(""))){
+                    listExpression.set(0,resolveOperation(pendings[0],listExpression.get(0),pendings[1]));
                     pending=0;
                 }
             }
-            else if(operator2=="+"||operator2=="-"){
-                listExpression.set(i,resolveOperation(number1,number2,operator1));
-                listExpression.subList(i+1, i+2).clear();
+            else if(operator2.equals("+")||operator2.equals("-")||operator2.equals("")){
+                listExpression.set(0,resolveOperation(number1,number2,operator1));
+                listExpression.subList(1, 3).clear();
                 if(pending==1){
-                    listExpression.set(i,resolveOperation(pendings[0],number1,pendings[1]));
+                    listExpression.set(0,resolveOperation(pendings[0],listExpression.get(0),pendings[1]));
                     pending=0;
                 }
             }
@@ -71,7 +69,7 @@ public class Calculator {
                 pendings[0]=number1;
                 pendings[1]=operator1;
                 pending=1;
-                listExpression.subList(i, i+1).clear();
+                listExpression.subList(0, 2).clear();
             }
         }
         return listExpression.get(0);
@@ -81,17 +79,19 @@ public class Calculator {
         int number1=Integer.parseInt(stringNumber1);
         int number2=Integer.parseInt(stringNumber2);
         int result=0;
-        if(operator=="*"){
-            result=number1*number2;
-        }
-        else if(operator=="/"){
-            result=number1/number2;
-        }
-        else if(operator=="+"){
-            result=number1+number2;
-        }
-        else if(operator=="-"){
-            result=number1-number2;
+        switch (operator) {
+            case "*":
+                result=number1*number2;
+                break;
+            case "/":
+                result=number1/number2;
+                break;
+            case "+":
+                result=number1+number2;
+                break;
+            case "-":
+                result=number1-number2;
+                break;
         }
         return Integer.toString(result);
     }
