@@ -16,7 +16,7 @@ public class Exercise1 {
         Calculator calc = new Calculator();
         String expression="";
         try{
-            Scanner input = new Scanner(new File("C:\\Users\\ciber_000\\Documents\\NetBeansProjects\\Exercise1\\src\\exercise1\\expresionNumerica.txt"));
+            Scanner input = new Scanner(new File("C:\\Users\\ciber.LAPTOP-0JK7T32O\\Documents\\NetBeansProjects\\BS1\\Exercise1\\src\\exercise1\\expresionNumerica.txt"));
             expression = input.nextLine();
             input.close();
             calc.evaluate(expression);
